@@ -1,0 +1,35 @@
+pipeline:
+  agent: any
+
+  tools:
+    - maven: 'maven'
+
+  stages:
+    - stage: 'Git Clone'
+      steps:
+        - script:
+            checkout:
+              scm:
+                - git:
+                    branches:
+                      - name: 'main'
+                    userRemoteConfigs:
+                      - url: 'https://github.com/GUEZIR-HAMZA/Jinkins_test.git'
+
+    - stage: 'Build'
+      steps:
+        - dir: 'POV-JAVA'
+          script:
+            - 'mvn clean install'
+
+    - stage: 'Create Docker Image'
+      steps:
+        - dir: 'POV-JAVA'
+          script:
+            - 'docker build -t GUEZIR-HAMZA/pos .'
+
+    - stage: 'Run'
+      steps:
+        - script:
+            dir: 'POV-JAVA'
+            - 'docker run --name test-pos -d -p 8585:8282 GUEZIR-HAMZA/pos .'
